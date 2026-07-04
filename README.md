@@ -75,3 +75,41 @@ This shows the game scores as a function of time
 <img width="947" height="687" alt="image" src="https://github.com/user-attachments/assets/5cf7354c-e7a3-43b6-b8d1-288709583c61" />
 
 Extremely similar to the previous game history page, this one is nicer. Paginated, allowable to sort and also expandable by round basis as before.
+
+
+## Technical Details
+
+### Tech-Stack
+
+**Backend:**
+- Python
+- HuggingFace
+- SupaBase
+
+**Frontend:**
+- HTML/JS/CSS
+- React
+- Leaflet
+- ChartJS
+
+**Hosting/Deployment**:
+- Netlify
+- XYZ
+
+
+### Data Accquisition
+The data for geopolitical border was extremely difficult to come accross. Many places were incomplete, hard to work with, did not provide a workable API, or were paid APIs. After a long time of searching, I found a website called Chronas. It was essentially a explore mode of what I have, except had many more features. Luckily for me, their network sources tab had json data files will all the information about a regions rulers, religion and culture as well as others. It took very long to figure out how the backend system for Chronas worked but eventually after figuring it out I was able to script it.
+
+Due to this being a JS website, I had to create a selenium script to click on every year individually then grab its json data files. It took extremely long but eventually worked. I stored all the files into HuggingFace. Thank you Chronas.
+
+Note: This is why the range of years for this website is -2000 to 2000, rather than the original MapGuessr's -3000 to 2020, as Chronas timeline was limited
+
+
+### Data Storage
+The data was extremely heavy and had considerable size, so this is where the province system comes into play. Instead of storing shapefiles and polygon data for each year, we split the map into provinces, with fixed shape over time. This way, we stored only one large shapefile. Then, for every year, we stored a kay value pair for every province and what color it should be for what keys. As such, we had 5000 json text files and only one shapefile.
+
+Then, when needed, we call the year file from the backend, and then use a custom "stitching" algorithm to combine hte province shapefiles and the yearly json key file to make a geojson that leaflet can read.
+
+
+
+  
